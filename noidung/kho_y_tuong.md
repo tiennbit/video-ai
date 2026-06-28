@@ -719,7 +719,12 @@ Cấp số nhân/lãi kép. (Đã có `laikep_video.py`.)
 4. **T10** Phòng thì thầm · **L31** Bếp từ · **T19** Nghịch lý sinh nhật — chọn theo mùa/sự kiện
 5. Xoay vòng: mỗi tuần 1 Toán + 1 Lý, ưu tiên thẻ 🎯 cao + 🎨 dễ, tránh đăng 2 thẻ trùng concept liền nhau.
 
-> Tổng kho: ~100 ý tưởng (Toán T1–T50, Lý L1–L50). Thẻ ✅ ĐÃ LÀM: T1, T5, L1, L7.
+> Tổng kho: ~100 ý tưởng (Toán T1–T50, Lý L1–L50).
+> ✅ ĐÃ LÀM (cập nhật 2026-06-29):
+>   Toán: T1, T2, T3, T4, T5, T6, T12, T17, T20, T23, T24, T25, T28, T30, T33, T37, T41
+>   Lý:   L1, L7, L13, L19, L20, L21, L26, L29, L39, L49
+>   (Lô đêm 2026-06-29: T2 lan truyền, T37 Fibonacci, L21 xô nước, L39 cộng hưởng;
+>    lô trước đó: T30 xáo bài, T25 bờ biển, L20 thang máy.)
 
 ## ✅ Việc tiếp theo
 - [ ] Tra web điền các số ⚠️ trước khi viết kịch bản (giá điện EVN, hằng số vật lý, số liệu thực tế).
