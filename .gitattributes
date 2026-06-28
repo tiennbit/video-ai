@@ -1,0 +1,7 @@
+# Bắt buộc LF cho script shell — CRLF làm hỏng `set -euo pipefail` khi bash chạy trong Docker.
+*.sh        text eol=lf
+*.command   text eol=lf
+render_pipeline.sh  text eol=lf
+render_queue.sh     text eol=lf
+publish_nextcloud.sh text eol=lf
+upload_nextcloud.sh  text eol=lf

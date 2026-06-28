@@ -51,3 +51,19 @@ echo "==> [3/3] Render HD ($RES @ ${FPS}fps)"
 
 OUT="$(find "media/videos/${SLUG}_video" -name "${SCENE}.mp4" -not -path '*partial*' | head -1)"
 echo "==> XONG: $OUT"
+
+# ===================================================================
+# [4/4] Đăng lên Nextcloud (video + mô tả) rồi dọn staging.
+#   Bật/tắt bằng PUBLISH (mặc định 1). Lỗi upload KHÔNG làm hỏng render:
+#   chỉ cảnh báo và GIỮ video cục bộ để đăng lại sau.
+# ===================================================================
+if [ "${PUBLISH:-1}" = "1" ] && [ -n "${OUT:-}" ] && [ -f "$OUT" ]; then
+  echo "==> [4/4] Đăng Nextcloud: $SLUG"
+  if bash "$ROOT/publish_nextcloud.sh" "$SLUG" "$OUT"; then
+    echo "==> ĐÃ ĐĂNG: $SLUG"
+  else
+    echo "⚠ Upload thất bại — GIỮ video cục bộ: $OUT (chạy lại: bash publish_nextcloud.sh $SLUG \"$OUT\")"
+  fi
+else
+  echo "==> (Bỏ qua đăng Nextcloud — đặt PUBLISH=1 để bật)"
+fi

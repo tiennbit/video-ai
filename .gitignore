@@ -15,6 +15,12 @@ media/
 output/narration/0*.mp3    # mp3 edge-tts cũ (nếu còn)
 output/voice_compare/
 output/preview/
+# staging tạm trước khi đẩy Nextcloud (tự xoá khi upload xong)
+output/upload/
+# artifact runtime của render-drain (queue ban ngày)
+output/.render_queue.lock*
+output/render_done.log
+output/render_fail.log
 output/*.mp4
 output/*.mp3
 

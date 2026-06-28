@@ -1,0 +1,40 @@
+# =============================================================================
+# docker-compose cho xưởng video-ai (CPU-only).
+#   - hf-cache (named volume): giữ model VoxCPM2 ~12GB + Whisper, KHỎI tải lại.
+#   - ./output, ./media (bind mount): giọng mẫu vào + wav/MP4 ra nằm trên host.
+# Dùng:
+#   docker compose build
+#   docker compose up -d
+#   docker compose exec videoai bash render_pipeline.sh docao DoCaoVideo
+# =============================================================================
+services:
+  videoai:
+    build: .
+    image: video-ai:latest
+    container_name: video-ai
+    working_dir: /app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - HF_HOME=/root/.cache/huggingface
+      - OMP_NUM_THREADS=8          # giới hạn thread torch CPU, tránh oversubscribe
+      - FORCE_VOICE=0
+      - ALIGN=0                    # karaoke đang TẮT trong brand.py
+      - PUBLISH=1                  # render xong = TỰ ĐỘNG đăng Nextcloud (đặt 0 để tắt)
+    volumes:
+      - ./output:/app/output                      # giọng mẫu + wav sinh ra + preview
+      - ./media:/app/media                        # MP4 render ra (host xem được)
+      - ./scenes:/app/scenes                      # sửa scene từ host không cần build lại
+      - ./noidung:/app/noidung                    # file thông tin SEO (mota/<slug>.txt) đọc/ghi trên host
+      # Mount script từ host (đã LF + có bước tự đăng) đè bản baked trong image:
+      - ./render_pipeline.sh:/app/render_pipeline.sh:ro
+      - ./render_queue.sh:/app/render_queue.sh:ro
+      - ./publish_nextcloud.sh:/app/publish_nextcloud.sh:ro
+      - ./upload_nextcloud.sh:/app/upload_nextcloud.sh:ro
+      # Credential Nextcloud (NGOÀI repo) -> để container tự đăng được. Đặt NC_ENV_FILE trong .env
+      - ${NC_ENV_FILE}:/root/.config/toanly/nextcloud.env:ro
+      - hf-cache:/root/.cache/huggingface         # model 12GB (bền qua restart)
+    shm_size: "2gb"
+    command: ["sleep", "infinity"]
+
+volumes:
+  hf-cache:

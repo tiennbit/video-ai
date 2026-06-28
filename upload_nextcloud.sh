@@ -19,14 +19,27 @@ ensure_dir() {  # tạo thư mục đích (bỏ qua nếu đã có: 405)
   curl -s -o /dev/null -u "$NC_USER:$NC_PASS" -X MKCOL "$BASE/$NC_DIR/" || true
 }
 
+ensure_collection() {  # MKCOL TỪNG CẤP của 1 đường dẫn tương đối (idempotent: 201 tạo / 405 đã có)
+  local rel="$1" acc="" part                # vd rel="VideoAI/video"
+  local OLDIFS="$IFS"; IFS='/'
+  for part in $rel; do
+    [ -n "$part" ] || continue
+    acc="${acc:+$acc/}$part"
+    curl -s -o /dev/null -u "$NC_USER:$NC_PASS" -X MKCOL "$BASE/$acc/" || true
+  done
+  IFS="$OLDIFS"
+}
+
 put_one() {
   local file="$1" name="${2:-$(basename "$1")}"
   [ -f "$file" ] || { echo "✗ Không thấy file: $file"; return 1; }
+  # Nếu tên đích có thư mục con (vd 'video/x.mp4') -> tạo các collection cha trước.
+  ensure_collection "$(dirname "$NC_DIR/$name")"
   local code
   code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 600 \
         -u "$NC_USER:$NC_PASS" -T "$file" "$BASE/$NC_DIR/$name")
   if [ "$code" = "201" ] || [ "$code" = "204" ]; then
-    echo "✓ Đã đăng: $name  ($code, $(du -h "$file" | cut -f1))"
+    echo "✓ Đã đăng: $name  ($code, $(ls -lh "$file" | awk '{print $5}'))"
   else
     echo "✗ Lỗi đăng ($code): $name"; return 1
   fi
