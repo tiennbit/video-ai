@@ -28,3 +28,11 @@ Mỗi video kèm file thông tin SEO ở /VideoAI/thongtin/.
 - Độ dài 90–107s (~1,5–1,8 phút): giọng clone đọc nhanh hơn ước lượng. Muốn chạm 2+ phút thật,
   tập sau nên tăng lên ~11–12 đoạn lời thoại.
 - Đừng `docker stop/rm` container đột ngột (giữ fix runtime). Build lại theo Dockerfile mới thì OK.
+
+## Lô bổ sung (render nốt 9 tập đã code) — 2026-06-29 ~03:13
+Nạp queue + drain: bongnay, dongdat, laikep, phanh, phimdan, sinhnhat, troixanh, xetnghiem (đã có giọng → render nhanh ~3'/tập)
++ parabol (pilot cũ: đã viết clone_narration_parabol.py + sửa parabol_video.py đọc wav chuẩn; drain sẽ sinh giọng rồi render).
+- 03:13 bongnay XONG+đăng. Drain đang chạy tiếp...
+- 03:13–03:59 — drain render+đăng cả 9 tập (8 sẵn giọng + parabol gen giọng), **0 LỖI**. ✅
+- parabol: render OK, có giọng (44s, 5 đoạn). Layout kiểu pilot cũ (Scene, không có brand template) — nếu muốn đồng bộ thương hiệu thì cần viết lại theo BrandScene (việc sau).
+- **TỔNG: 17 video trên Nextcloud /VideoAI.**

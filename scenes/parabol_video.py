@@ -14,8 +14,11 @@ Bước 2 — render dọc cho YouTube Shorts/Reels:
 import os
 from contextlib import contextmanager
 
+import wave
+
 from manim import *
-from mutagen.mp3 import MP3
+
+from narration_texts import SEGMENTS as _SEG_FALLBACK
 
 # Bảng màu kênh
 BG = "#0E1117"
@@ -25,13 +28,17 @@ HILITE = "#FF6B6B"   # đỏ nhấn
 MUTED = "#9AA4B2"    # xám phụ
 
 FONT = "Arial"
-NARR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output", "narration"))
+NARR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "output", "narration_parabol"))
 
 
 class ParabolVideo(Scene):
     # ---------- hạ tầng đồng bộ tiếng/hình ----------
     def _dur(self, seg):
-        return MP3(os.path.join(NARR, f"{seg}.mp3")).info.length
+        p = os.path.join(NARR, f"{seg}.wav")
+        if os.path.exists(p):
+            with wave.open(p, "rb") as w:
+                return w.getnframes() / float(w.getframerate())
+        return max(2.0, len(_SEG_FALLBACK.get(seg, "").split()) / 2.4 + 0.4)
 
     def _play(self, *anims, run_time=1.0, **kw):
         self.play(*anims, run_time=run_time, **kw)
@@ -47,7 +54,9 @@ class ParabolVideo(Scene):
         """Phát câu thoại NGAY bây giờ; tự chờ cho hết câu khi thoát block."""
         d = self._dur(seg)
         start = self.clock
-        self.add_sound(os.path.join(NARR, f"{seg}.mp3"))   # time_offset=0 -> phát ngay
+        p = os.path.join(NARR, f"{seg}.wav")
+        if os.path.exists(p):
+            self.add_sound(p)   # time_offset=0 -> phát ngay
         yield d
         self._wait(d - (self.clock - start))   # lấp cho đủ độ dài câu thoại
         self._wait(gap)                          # nghỉ nhẹ giữa các beat
