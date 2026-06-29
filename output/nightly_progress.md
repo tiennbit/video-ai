@@ -36,3 +36,13 @@ Nạp queue + drain: bongnay, dongdat, laikep, phanh, phimdan, sinhnhat, troixan
 - 03:13–03:59 — drain render+đăng cả 9 tập (8 sẵn giọng + parabol gen giọng), **0 LỖI**. ✅
 - parabol: render OK, có giọng (44s, 5 đoạn). Layout kiểu pilot cũ (Scene, không có brand template) — nếu muốn đồng bộ thương hiệu thì cần viết lại theo BrandScene (việc sau).
 - **TỔNG: 17 video trên Nextcloud /VideoAI.**
+
+## Lô đêm 2026-06-30 — code tiếp (chuẩn ~2 phút, 12 đoạn)
+Nhánh: nightly/2026-06-30. Thêm module chung scenes/_clone_common.py (mỗi clone script còn ~6 dòng).
+| Tập | Ý tưởng | Code | QA | Queue |
+|-----|---------|:----:|:--:|:-----:|
+| gps | T8 GPS định vị + thuyết tương đối (giao 3 mặt cầu) | ✅ | ✅ | ✅ |
+| uranium | L50 E=mc² (1 viên = 1 tấn than, phân hạch) | ✅ | ✅ | ✅ |
+| coixe | L38 Doppler còi xe (sóng dồn/giãn) | ✅ | ✅ | ✅ |
+- Mỗi tập 12 đoạn lời thoại → ước lượng ~2–2,3 phút (đạt mốc 2 phút). QA preview low-q OK.
+- KHÔNG render HD (để watcher/ban ngày render qua render_queue.sh).
