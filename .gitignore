@@ -31,3 +31,6 @@ output/*.mp3
 # ===== Bí mật (không bao giờ đẩy) =====
 *.env
 .nextcloud*
+
+# log runtime của Windows auto-render task
+output/auto_render_*.log
