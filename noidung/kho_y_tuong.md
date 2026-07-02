@@ -69,7 +69,7 @@ Cấp số nhân/lãi kép. (Đã có `laikep_video.py`.)
 - **Wow:** cùng ý tưởng tính quãng đường từ đồ thị vận tốc, lượng thuốc trong máu, diện tích logo bất kỳ.
 - **Còn dùng:** kỹ thuật, kinh tế (tổng tích luỹ).
 
-### T10. Bí mật phòng thì thầm — "Tại sao thì thầm ở góc này, người đứng tận góc kia nghe rõ mồn một?"
+### T10. Bí mật phòng thì thầm — "Tại sao thì thầm ở góc này, người đứng tận góc kia nghe rõ mồn một?" ✅ ĐÃ LÀM (đêm 2026-07-03, slug `thitham`)
 - 🎯 cao · 🎨 dễ · Lớp 10 (Conic - elip và tính chất phản xạ qua hai tiêu điểm; định nghĩa elip MF1+MF2=2a) ⚠️ Khoảng cách hai tiêu điểm phòng thì thầm St Paul's và mức âm nghe được
 - **Thực:** Phòng vòm hình elip (whispering gallery) ở nhà thờ St Paul's: hai người đứng cách nhau 30m vẫn nghe tiếng thì thầm của nhau, dù xung quanh ồn ào.
 - **Logic:** Mô hình trần phòng là một elip với hai tiêu điểm F1, F2. Tính chất conic: mọi tia âm xuất phát từ F1 phản xạ trên thành elip đều đi qua F2, và quãng đường F1->thành->F2 luôn bằng 2a nên âm tới cùng pha. Đặt người nói ở F1, người nghe ở F2.
@@ -188,7 +188,7 @@ Cấp số nhân/lãi kép. (Đã có `laikep_video.py`.)
 - **Wow:** Chỉ với một hàm cos, ta tính được giờ nước lớn của 10 năm sau - vì biển 'lặp lại' tuyệt đối đều theo Mặt Trăng.
 - **Còn dùng:** Cảng biển, thuỷ điện thuỷ triều, dự báo ngập đô thị, nhịp sinh học, tín hiệu điện xoay chiều.
 
-### T27. Liều thuốc và giới hạn an toàn — "Uống thuốc mỗi 8 tiếng - vì sao thuốc không 'tích lại' đến mức ngộ độc?"
+### T27. Liều thuốc và giới hạn an toàn — "Uống thuốc mỗi 8 tiếng - vì sao thuốc không 'tích lại' đến mức ngộ độc?" ✅ ĐÃ LÀM (đêm 2026-07-03, slug `lieuthuoc`)
 - 🎯 cao · 🎨 trung bình · Lớp 11 (Giới hạn dãy số / tổng cấp số nhân lùi vô hạn S = u1/(1-q)) ⚠️ Mô hình một ngăn (one-compartment) bán thải; r = (1/2)^(Δt/t½) - nêu là mô hình đơn giản hoá
 - **Thực:** Mỗi liều thuốc đưa nồng độ trong máu tăng vọt, rồi gan thận đào thải bớt giữa hai liều. Liều mới cộng vào phần còn sót của liều cũ.
 - **Logic:** Sau mỗi chu kỳ còn lại tỉ lệ r (vd r=1/2 nếu mất nửa). Nồng độ trước liều thứ n là cấp số nhân: D·(r + r^2 + ...) nên tổng cấp số nhân lùi vô hạn = D·r/(1-r). Nó HỘI TỤ về một mức ổn định chứ không lên vô hạn.
@@ -465,7 +465,7 @@ Cấp số nhân/lãi kép. (Đã có `laikep_video.py`.)
 - **Wow:** Một móc giác hút bé tí giữ được tới 13kg - không phải nhờ 'keo dính', mà nhờ chính bầu khí quyển đè nó vào tường.
 - **Còn dùng:** Móc treo nhà tắm, tay máy hút kính trong nhà máy, robot leo tường, vận chuyển tấm kính lớn, đồ chơi phi tiêu giác hút
 
-### L16. Ống hút cao tối đa 10 mét — "Dù phổi bạn khoẻ đến đâu, không ống hút nào hút nước lên cao quá 10,3 mét - đây là giới hạn của vũ trụ."
+### L16. Ống hút cao tối đa 10 mét — "Dù phổi bạn khoẻ đến đâu, không ống hút nào hút nước lên cao quá 10,3 mét - đây là giới hạn của vũ trụ." ✅ ĐÃ LÀM (đêm 2026-07-03, slug `onghut`)
 - 🎯 cao · 🎨 trung bình · Lớp 10 (Áp suất khí quyển nâng cột chất lỏng, h = p/(ρg)) ⚠️ 101325/(1000×9,8) = 10,34 m
 - **Thực:** Bạn cố hút nước qua một ống hút dài thẳng đứng, hút mạnh đến mức tạo chân không hoàn toàn ở miệng trên.
 - **Logic:** Hút không phải 'kéo' nước, mà là giảm áp suất ở trên để khí quyển đẩy nước lên. Chiều cao tối đa khi áp suất khí quyển cân bằng cột nước: h = p_atm/(ρ·g) = 101325/(1000×9,8).
@@ -549,7 +549,7 @@ Cấp số nhân/lãi kép. (Đã có `laikep_video.py`.)
 - **Wow:** Cắt đôi chiều dài dây đàn nên âm cao hơn đúng gấp đôi tần số, đó chính là 1 octave.
 - **Còn dùng:** Sóng dừng, cộng hưởng, sáo, ống nghiệm thổi, dây thanh quản
 
-### L28. Bịt tai khử ồn hoạt động sao — "Tai nghe chống ồn không chặn âm thanh, nó tạo thêm âm thanh để... xóa âm thanh. Bằng cách nào?"
+### L28. Bịt tai khử ồn hoạt động sao — "Tai nghe chống ồn không chặn âm thanh, nó tạo thêm âm thanh để... xóa âm thanh. Bằng cách nào?" ✅ ĐÃ LÀM (đêm 2026-07-03, slug `chongon`)
 - 🎯 cao · 🎨 trung bình · Lớp 11 (Giao thoa sóng, điều kiện triệt tiêu (lệch pha nửa bước sóng)) ⚠️ Điều kiện triệt tiêu: hiệu đường đi = (k+0.5)λ; lệch pha π
 - **Thực:** Tai nghe chống ồn chủ động (ANC) trên máy bay khử tiếng động cơ ầm ầm.
 - **Logic:** Hai sóng âm ngược pha (lệch pha π, tức nửa bước sóng) giao thoa triệt tiêu. Micro thu sóng ồn, loa phát sóng đảo pha nên biên độ tổng = 0. Giải thích điều kiện giao thoa triệt tiêu.
@@ -720,10 +720,19 @@ Cấp số nhân/lãi kép. (Đã có `laikep_video.py`.)
 5. Xoay vòng: mỗi tuần 1 Toán + 1 Lý, ưu tiên thẻ 🎯 cao + 🎨 dễ, tránh đăng 2 thẻ trùng concept liền nhau.
 
 > Tổng kho: ~100 ý tưởng (Toán T1–T50, Lý L1–L50).
-> ✅ ĐÃ LÀM (cập nhật 2026-07-02):
->   Toán: T1, T2, T3, T4, T5, T6, T7, T8, T12, T15, T17, T20, T23, T24, T25, T28, T30, T33, T37, T41
->   Lý:   L1, L7, L8, L10, L13, L19, L20, L21, L26, L29, L38, L39, L49, L50
->   (Lô đêm 2026-07-02 — đã CODE + QA offline, chờ render HD:
+> ✅ ĐÃ LÀM (cập nhật 2026-07-03):
+>   Toán: T1, T2, T3, T4, T5, T6, T7, T8, T10, T12, T15, T17, T20, T23, T24, T25, T27, T28, T30, T33, T37, T41
+>   Lý:   L1, L7, L8, L10, L13, L16, L19, L20, L21, L26, L28, L29, L38, L39, L49, L50
+>   (Lô đêm 2026-07-03 — đã CODE + QA offline, chờ render HD:
+>      T10 thitham (phòng thì thầm / elip), L16 onghut (ống hút 10,3 m / áp suất khí quyển),
+>      L28 chongon (tai nghe khử ồn / giao thoa), T27 lieuthuoc (liều thuốc / cấp số nhân).
+>    Lô đêm 2026-07-02 — đã CODE + QA offline, chờ render HD:
 >      T15 magnus (cú xoáy Messi / Magnus), L8 capquang (khúc xạ + cáp quang),
 >      L10 chimday (chim đậu dây điện), T7 lonnuoc (lon tối ưu / đạo hàm).
->    Lô đêm 2026-06-30 — chờ render: T8 GPS, L50 uranium/E=mc², L38 Doppler 
+>    Lô đêm 2026-06-30 — chờ render: T8 GPS, L50 uranium/E=mc², L38 Doppler còi xe.
+>    Lô 2026-06-29: T2 lan truyền, T37 Fibonacci, L21 xô nước, L39 cộng hưởng;
+>    lô trước đó: T30 xáo bài, T25 bờ biển, L20 thang máy.)
+
+## ✅ Việc tiếp theo
+- [ ] Tra web điền các số ⚠️ trước khi viết kịch bản (giá điện EVN, hằng số vật lý, số liệu thực tế).
+- [ ] Chốt 1 chủ đề → viết kịch bản 2 phút (logic chi tiết) theo template dọc 9:16.

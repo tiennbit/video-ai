@@ -9,3 +9,15 @@
 # Ví dụ (đang comment, bỏ # để kích hoạt):
 # docao DoCaoVideo
 # matkhau MatKhauVideo
+
+# --- Lô đêm 2026-07-02 (đã CODE + QA offline, chờ render HD ban ngày) ---
+magnus MagnusVideo
+capquang CapQuangVideo
+chimday ChimDayVideo
+lonnuoc LonNuocVideo
+
+# --- Lô đêm 2026-07-03 (đã CODE + QA offline, chờ render HD ban ngày) ---
+thitham ThiThamVideo
+onghut OngHutVideo
+chongon ChongOnVideo
+lieuthuoc LieuThuocVideo
