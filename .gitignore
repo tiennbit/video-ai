@@ -1,0 +1,39 @@
+# ===== Môi trường & cache (tạo lại trên server) =====
+.venv/
+**/__pycache__/
+*.pyc
+.DS_Store
+gui_state.json
+
+# ===== Kết quả render (tạo lại trên server / đã đăng Nextcloud) =====
+media/
+
+# ===== Audio/video SINH RA =====
+# GIỮ giọng đã sinh (output/narration_<slug>/*.wav) trong repo để clone về render ngay,
+# KHỎI phải sinh lại 20'/tập. Nếu repo phình to thì chuyển sang Git LFS hoặc bỏ comment dòng dưới.
+# output/narration_*/
+output/narration/0*.mp3    # mp3 edge-tts cũ (nếu còn)
+output/voice_compare/
+output/preview/
+# staging tạm trước khi đẩy Nextcloud (tự xoá khi upload xong)
+output/upload/
+# artifact runtime của render-drain (queue ban ngày)
+output/.render_queue.lock*
+output/render_done.log
+output/render_fail.log
+output/*.mp4
+output/*.mp3
+
+# ===== BẮT BUỘC giữ (KHÔNG ignore) =====
+# output/narration/voice-yeu*  -> MẪU giọng clone (danh tính giọng, không thể tái tạo)
+# output/narration_<slug>/*.wav -> giọng đã sinh từng tập
+
+# ===== Bí mật (không bao giờ đẩy) =====
+*.env
+.nextcloud*
+
+# log runtime của Windows auto-render task
+output/auto_render_*.log
+
+# cache video tải về để đăng TikTok
+output/tiktok_cache/
