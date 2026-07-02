@@ -32,12 +32,18 @@
    - `video.publish`  ← BẮT BUỘC để đăng trực tiếp
    - `user.info.basic` (khuyến nghị)
 
-## 4. Cấu hình Redirect URI (PHẢI khớp script)
-1. Trong app (mục **Login Kit** hoặc **Redirect URI**) → thêm đúng:
+## 4. Cấu hình Redirect URI (HTTPS công khai — TikTok KHÔNG cho localhost)
+> TikTok báo *"localhost is not supported"* → phải dùng URL **HTTPS công khai**. Ta dùng trang tĩnh
+> trên GitHub Pages của repo (đã có sẵn), không cần server riêng.
+
+1. **Bật GitHub Pages** cho repo (1 lần): `github.com/tiennbit/video-ai` → **Settings → Pages** →
+   Source = **Deploy from a branch**, Branch = `main`, thư mục = **`/docs`** → Save. Chờ ~1 phút.
+2. Trong app TikTok, mục **Login Kit → Redirect URI** (đăng ký ở **đúng môi trường** — Sandbox nếu key
+   bắt đầu bằng `sbaw`), thêm **CHÍNH XÁC**:
    ```
-   http://localhost:8723/callback
+   https://tiennbit.github.io/video-ai/tiktok/callback.html
    ```
-2. Đây chính là giá trị `TIKTOK_REDIRECT_URI` script dùng. Nếu bạn đổi cổng, phải sửa cả 2 nơi cho khớp.
+3. Đây chính là `TIKTOK_REDIRECT_URI` script dùng (đã đặt sẵn trong `tiktok.env`). Phải khớp **từng ký tự**.
 
 ## 5. Thêm tài khoản test (Sandbox) — để đăng được khi CHƯA audit
 - App chưa audit chỉ đăng được **SELF_ONLY** và chỉ cho **tài khoản đã thêm làm target user**.
@@ -54,7 +60,7 @@ với nội dung — **điền 2 dòng key/secret bằng giá trị thật ở b
 ```
 TIKTOK_CLIENT_KEY=<DÁN Client key>
 TIKTOK_CLIENT_SECRET=<DÁN Client secret>
-TIKTOK_REDIRECT_URI=http://localhost:8723/callback
+TIKTOK_REDIRECT_URI=https://tiennbit.github.io/video-ai/tiktok/callback.html
 TIKTOK_PRIVACY_LEVEL=SELF_ONLY
 ```
 Các dòng token (ACCESS/REFRESH...) **để trống** — script tự ghi sau khi login.
@@ -63,19 +69,26 @@ Các dòng token (ACCESS/REFRESH...) **để trống** — script tự ghi sau k
 > mkdir -p ~/.config/toanly && cat > ~/.config/toanly/tiktok.env <<'EOF'
 > TIKTOK_CLIENT_KEY=<DÁN Client key>
 > TIKTOK_CLIENT_SECRET=<DÁN Client secret>
-> TIKTOK_REDIRECT_URI=http://localhost:8723/callback
+> TIKTOK_REDIRECT_URI=https://tiennbit.github.io/video-ai/tiktok/callback.html
 > TIKTOK_PRIVACY_LEVEL=SELF_ONLY
 > EOF
 > chmod 600 ~/.config/toanly/tiktok.env
 > ```
 
-## 8. Đăng nhập OAuth lần đầu
+## 8. Đăng nhập OAuth lần đầu (2 bước — dán code)
+**Bước 1 — mở trang cấp quyền:**
 ```bash
 python tiktok_publish/publish.py login
 ```
-- Script mở trình duyệt tới trang TikTok → bấm **Authorize**.
-- Trình duyệt chuyển về `localhost:8723/callback` (trang báo "Đã nhận phản hồi").
+Script in ra URL cấp quyền (và tự mở trình duyệt). Bấm **Authorize** trên TikTok.
+
+**Bước 2 — dán code:** TikTok chuyển về trang callback (`.../tiktok/callback.html`) hiện **code** kèm nút Copy.
+Copy code (hoặc copy cả URL trên thanh địa chỉ) rồi chạy:
+```bash
+python tiktok_publish/publish.py auth "<dán code hoặc URL>"
+```
 - Token lưu vào `~/.config/toanly/tiktok.env`. Script tự **refresh** khi hết hạn (không cần login lại).
+- (PKCE verifier + state được lưu tạm ở `~/.config/toanly/.tiktok_pkce.json` giữa 2 bước, tự xoá sau khi xong.)
 
 ## 9. Đăng video
 ```bash
@@ -100,8 +113,9 @@ python tiktok_publish/publish.py --list     # xem tình trạng
 |---|------|-------|
 | 1 | Đăng ký developer + tạo app | developers.tiktok.com |
 | 2 | Bật Content Posting API + scope `video.publish` + Direct Post | trang app |
-| 3 | Thêm Redirect URI `http://localhost:8723/callback` | trang app |
-| 4 | Thêm tài khoản TikTok của bạn làm target user (sandbox) | trang app |
-| 5 | Copy Client Key/Secret → điền vào `~/.config/toanly/tiktok.env` | máy bạn |
-| 6 | Host Privacy Policy lên tiennb.com (lấy URL điền vào app) | site của bạn |
-| 7 | Quay video demo + nộp audit (khi muốn public) | trang app |
+| 3 | **Bật GitHub Pages** (Settings→Pages, branch `main`, `/docs`) | github.com/tiennbit/video-ai |
+| 4 | Thêm Redirect URI `https://tiennbit.github.io/video-ai/tiktok/callback.html` (đúng môi trường Sandbox) | trang app |
+| 5 | Thêm tài khoản TikTok của bạn làm target user (sandbox) | trang app |
+| 6 | Copy Client Key/Secret → điền vào `~/.config/toanly/tiktok.env` | máy bạn |
+| 7 | (Privacy/Terms đã có sẵn trên Pages: `.../tiktok/privacy.html`, `.../terms.html`) — điền URL vào app | trang app |
+| 8 | Quay video demo + nộp audit (khi muốn public) | trang app |

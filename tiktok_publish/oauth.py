@@ -11,24 +11,42 @@ Tự refresh access_token khi hết hạn (dùng refresh_token).
 """
 from __future__ import annotations
 
+import base64
+import hashlib
+import json
+import os
 import secrets
 import time
 import urllib.parse
 import webbrowser
-from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import requests
 
-from config import AUTH_URL, SCOPES, TOKEN_URL, load_config, require, save_tokens
+from config import (AUTH_URL, PKCE_STATE, SCOPES, TIKTOK_ENV, TOKEN_URL,
+                    load_config, require, save_tokens)
 
 
-def build_authorize_url(client_key: str, redirect_uri: str, state: str, scopes: str = SCOPES) -> str:
+def pkce_pair() -> tuple[str, str]:
+    """(code_verifier, code_challenge) theo RFC 7636, method S256.
+    - verifier: 43–128 ký tự trong [A-Za-z0-9-._~] (token_urlsafe dùng [A-Za-z0-9-_], là tập con hợp lệ).
+    - challenge = base64url( SHA256(verifier) ) KHÔNG padding.
+    THUẦN LOGIC (test được)."""
+    verifier = secrets.token_urlsafe(64)  # ~86 ký tự
+    digest = hashlib.sha256(verifier.encode("ascii")).digest()
+    challenge = base64.urlsafe_b64encode(digest).rstrip(b"=").decode("ascii")
+    return verifier, challenge
+
+
+def build_authorize_url(client_key: str, redirect_uri: str, state: str,
+                        code_challenge: str, scopes: str = SCOPES) -> str:
     params = {
         "client_key": client_key,
         "scope": scopes,
         "response_type": "code",
         "redirect_uri": redirect_uri,
         "state": state,
+        "code_challenge": code_challenge,     # PKCE — TikTok Login Kit yêu cầu
+        "code_challenge_method": "S256",
     }
     return AUTH_URL + "?" + urllib.parse.urlencode(params)
 
@@ -66,13 +84,14 @@ def _post_token(data: dict) -> dict:
         raise RuntimeError(f"Token endpoint trả về không phải JSON (HTTP {r.status_code}): {r.text[:300]}")
 
 
-def exchange_code(cfg: dict, code: str) -> dict[str, str]:
+def exchange_code(cfg: dict, code: str, code_verifier: str) -> dict[str, str]:
     payload = _post_token({
         "client_key": cfg["TIKTOK_CLIENT_KEY"],
         "client_secret": cfg["TIKTOK_CLIENT_SECRET"],
         "code": code,
         "grant_type": "authorization_code",
         "redirect_uri": cfg["TIKTOK_REDIRECT_URI"],
+        "code_verifier": code_verifier,       # PKCE — khớp code_challenge đã gửi ở authorize
     })
     tokens = _parse_token_response(payload)
     save_tokens(tokens)
@@ -103,63 +122,75 @@ def valid_access_token(cfg: dict | None = None, skew: int = 120) -> str:
     return cfg["TIKTOK_ACCESS_TOKEN"]
 
 
-# ---- local callback server ----
-class _Handler(BaseHTTPRequestHandler):
-    server_version = "TikTokLoginHelper/1.0"
+# ---- luồng MANUAL (redirect HTTPS công khai; KHÔNG local server) ----
+def extract_code(text: str) -> tuple[str, str | None]:
+    """Từ chuỗi user dán (code trần HOẶC nguyên URL redirect) -> (code, state|None).
+    Nếu URL có 'error' thì raise. THUẦN LOGIC (test được)."""
+    text = (text or "").strip()
+    if text.startswith("http") or "code=" in text or "error=" in text:
+        q = urllib.parse.urlparse(text).query or text.split("?", 1)[-1]
+        params = dict(urllib.parse.parse_qsl(q))
+        if params.get("error"):
+            raise SystemExit(f"TikTok trả về lỗi: {params['error']} — {params.get('error_description', '')}")
+        code = params.get("code", "")
+        if not code:
+            raise SystemExit(f"Không tìm thấy 'code' trong chuỗi đã dán: {text[:80]}")
+        return code, params.get("state")
+    return text, None
 
-    def do_GET(self):  # noqa: N802
-        parsed = urllib.parse.urlparse(self.path)
-        if parsed.path.rstrip("/") not in ("/callback", ""):
-            self.send_response(404); self.end_headers(); return
-        qs = urllib.parse.parse_qs(parsed.query)
-        self.server.oauth_result = {  # type: ignore[attr-defined]
-            "code": qs.get("code", [None])[0],
-            "state": qs.get("state", [None])[0],
-            "error": qs.get("error", [None])[0],
-        }
-        body = "<h2>Đã nhận phản hồi TikTok. Bạn có thể đóng tab này.</h2>"
-        self.send_response(200)
-        self.send_header("Content-Type", "text/html; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(body.encode("utf-8"))
 
-    def log_message(self, *args):  # tắt log ồn
+def _save_pkce(verifier: str, state: str, redirect_uri: str) -> None:
+    PKCE_STATE.parent.mkdir(parents=True, exist_ok=True)
+    PKCE_STATE.write_text(
+        json.dumps({"verifier": verifier, "state": state, "redirect_uri": redirect_uri}),
+        encoding="utf-8",
+    )
+    try:
+        os.chmod(PKCE_STATE, 0o600)
+    except OSError:
         pass
 
 
-def login(open_browser: bool = True) -> dict[str, str]:
-    """Chạy luồng login đầy đủ; trả token đã lưu."""
+def _load_pkce() -> dict:
+    if not PKCE_STATE.exists():
+        raise SystemExit("Chưa có phiên login đang chờ. Hãy chạy trước: python tiktok_publish/publish.py login")
+    return json.loads(PKCE_STATE.read_text(encoding="utf-8"))
+
+
+def login_start(open_browser: bool = True) -> str:
+    """BƯỚC 1: sinh PKCE + state, LƯU TẠM ra file, in authorize URL, mở trình duyệt. Trả URL."""
     cfg = load_config()
     require(cfg, "TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET")
     redirect = cfg["TIKTOK_REDIRECT_URI"]
-    parsed = urllib.parse.urlparse(redirect)
-    host, port = parsed.hostname or "localhost", parsed.port or 80
     state = secrets.token_urlsafe(16)
-
-    url = build_authorize_url(cfg["TIKTOK_CLIENT_KEY"], redirect, state)
-    print("Mở trình duyệt để đăng nhập TikTok...\nNếu không tự mở, dán URL sau vào trình duyệt:\n" + url)
+    verifier, challenge = pkce_pair()
+    _save_pkce(verifier, state, redirect)
+    url = build_authorize_url(cfg["TIKTOK_CLIENT_KEY"], redirect, state, challenge)
+    print("=== BƯỚC 1/2: CẤP QUYỀN TIKTOK ===")
+    print("Mở URL sau trong trình duyệt (đã thử tự mở):\n")
+    print(url + "\n")
+    print(f"Sau khi bấm Authorize, trang callback ({redirect})")
+    print("sẽ hiện 'code'. Copy code (hoặc cả URL) rồi chạy BƯỚC 2:\n")
+    print('    python tiktok_publish/publish.py auth "<dán code hoặc URL>"\n')
     if open_browser:
-        webbrowser.open(url)
+        try:
+            webbrowser.open(url)
+        except Exception:  # noqa: BLE001
+            pass
+    return url
 
-    httpd = HTTPServer((host, port), _Handler)
-    httpd.oauth_result = None  # type: ignore[attr-defined]
-    print(f"Đang chờ callback tại {redirect} ...")
-    while httpd.oauth_result is None:  # type: ignore[attr-defined]
-        httpd.handle_request()
-    res = httpd.oauth_result  # type: ignore[attr-defined]
 
-    if res.get("error"):
-        raise SystemExit(f"TikTok từ chối cấp quyền: {res['error']}")
-    if res.get("state") != state:
-        raise SystemExit("State không khớp — nghi ngờ CSRF, huỷ.")
-    if not res.get("code"):
-        raise SystemExit("Không nhận được authorization code.")
-
-    tokens = exchange_code(cfg, res["code"])
-    print(f"Đăng nhập OK. open_id={tokens.get('TIKTOK_OPEN_ID','')[:10]}… Token đã lưu vào {config_env()}.")
+def login_finish(code_or_url: str) -> dict[str, str]:
+    """BƯỚC 2: đọc verifier+state đã lưu, trích code, verify state, đổi token."""
+    saved = _load_pkce()
+    cfg = load_config()
+    code, state = extract_code(code_or_url)
+    if state is not None and state != saved.get("state"):
+        raise SystemExit("State không khớp — nghi ngờ CSRF, huỷ. Chạy lại 'login'.")
+    tokens = exchange_code(cfg, code, saved["verifier"])
+    try:
+        PKCE_STATE.unlink()
+    except OSError:
+        pass
+    print(f"Đăng nhập OK. open_id={tokens.get('TIKTOK_OPEN_ID', '')[:10]}… Token đã lưu vào {TIKTOK_ENV}.")
     return tokens
-
-
-def config_env():
-    from config import TIKTOK_ENV
-    return TIKTOK_ENV

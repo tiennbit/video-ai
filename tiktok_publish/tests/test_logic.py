@@ -12,7 +12,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 from config import SINGLE_CHUNK_MAX  # noqa: E402
 from nextcloud_src import build_caption  # noqa: E402
-from oauth import _parse_token_response  # noqa: E402
+from oauth import _parse_token_response, build_authorize_url, extract_code, pkce_pair  # noqa: E402
 from tiktok_api import (build_post_body, chunk_ranges, compute_chunks,  # noqa: E402
                         data_or_raise, validate_privacy)
 
@@ -118,3 +118,50 @@ def test_parse_token_response_ok():
 def test_parse_token_response_error():
     with pytest.raises(RuntimeError):
         _parse_token_response({"error": "invalid_grant", "error_description": "expired code"})
+
+
+# ---------- PKCE (RFC 7636) ----------
+def test_pkce_verifier_length_and_charset():
+    import re
+    verifier, _ = pkce_pair()
+    assert 43 <= len(verifier) <= 128
+    assert re.fullmatch(r"[A-Za-z0-9\-._~]+", verifier)  # ký tự hợp lệ RFC 7636
+
+
+def test_pkce_challenge_is_s256_base64url_nopad():
+    import base64
+    import hashlib
+    verifier, challenge = pkce_pair()
+    expect = base64.urlsafe_b64encode(hashlib.sha256(verifier.encode()).digest()).rstrip(b"=").decode()
+    assert challenge == expect
+    assert "=" not in challenge and "+" not in challenge and "/" not in challenge  # base64url không padding
+
+
+def test_pkce_pair_is_random():
+    assert pkce_pair()[0] != pkce_pair()[0]
+
+
+def test_authorize_url_has_pkce_params():
+    url = build_authorize_url("ck123", "https://tiennbit.github.io/video-ai/tiktok/callback.html", "st", "CHAL")
+    assert "code_challenge=CHAL" in url
+    assert "code_challenge_method=S256" in url
+    assert "client_key=ck123" in url and "response_type=code" in url
+
+
+# ---------- extract_code (luồng manual paste) ----------
+def test_extract_code_bare():
+    assert extract_code("  ABC.123-xyz  ") == ("ABC.123-xyz", None)
+
+
+def test_extract_code_from_full_url():
+    url = "https://tiennbit.github.io/video-ai/tiktok/callback.html?code=XYZ789&state=ST42"
+    assert extract_code(url) == ("XYZ789", "ST42")
+
+
+def test_extract_code_from_query_only():
+    assert extract_code("?code=Q1&state=S1") == ("Q1", "S1")
+
+
+def test_extract_code_error_raises():
+    with pytest.raises(SystemExit):
+        extract_code("https://x/callback.html?error=access_denied&error_description=nope")

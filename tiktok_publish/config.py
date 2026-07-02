@@ -34,13 +34,16 @@ CHUNK_MIN = 5 * 1024 * 1024
 CHUNK_MAX = 64 * 1024 * 1024
 SINGLE_CHUNK_MAX = 64 * 1024 * 1024  # <= mức này -> đăng 1 chunk (chunk_size = cả file)
 
-DEFAULT_REDIRECT_URI = "http://localhost:8723/callback"
+# TikTok KHÔNG hỗ trợ redirect localhost -> dùng trang tĩnh HTTPS công khai (GitHub Pages).
+DEFAULT_REDIRECT_URI = "https://tiennbit.github.io/video-ai/tiktok/callback.html"
 DEFAULT_PRIVACY = "SELF_ONLY"  # app CHƯA audit chỉ được SELF_ONLY
 
 TIKTOK_ENV = Path(os.path.expanduser("~/.config/toanly/tiktok.env"))
 NEXTCLOUD_ENV = Path(os.path.expanduser("~/.config/toanly/nextcloud.env"))
 # Log các slug ĐÃ đăng TikTok (ngoài repo) — chống đăng trùng.
 POSTED_LOG = Path(os.path.expanduser("~/.config/toanly/tiktok_posted.log"))
+# Lưu tạm PKCE verifier + state giữa bước login (mở URL) và bước auth (dán code).
+PKCE_STATE = Path(os.path.expanduser("~/.config/toanly/.tiktok_pkce.json"))
 
 
 def parse_env(path: Path) -> dict[str, str]:

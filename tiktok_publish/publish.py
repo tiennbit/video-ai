@@ -3,7 +3,8 @@
 CLI đăng TikTok qua Content Posting API (đăng trực tiếp, mặc định SELF_ONLY).
 
 Dùng:
-    python tiktok_publish/publish.py login          # lần đầu: lấy token OAuth
+    python tiktok_publish/publish.py login          # BƯỚC 1: mở URL cấp quyền TikTok
+    python tiktok_publish/publish.py auth "<code>"  # BƯỚC 2: dán code từ trang callback -> lấy token
     python tiktok_publish/publish.py <slug>         # đăng 1 tập (vd: gps)
     python tiktok_publish/publish.py --queue        # đăng mọi video trên Nextcloud chưa đăng TikTok
     python tiktok_publish/publish.py --list         # xem tình trạng (đã có / đã đăng)
@@ -29,8 +30,7 @@ for _s in (sys.stdout, sys.stderr):
 
 from config import DEFAULT_PRIVACY, POSTED_LOG, load_config  # noqa: E402
 from nextcloud_src import fetch_video, list_published_slugs, read_caption  # noqa: E402
-from oauth import login as oauth_login  # noqa: E402
-from oauth import valid_access_token  # noqa: E402
+from oauth import login_finish, login_start, valid_access_token  # noqa: E402
 from tiktok_api import (build_post_body, compute_chunks, init_video, poll_status,  # noqa: E402
                         query_creator_info, upload_file, validate_privacy)
 
@@ -107,13 +107,21 @@ def show_list() -> None:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Đăng TikTok qua Content Posting API (SELF_ONLY mặc định).")
-    ap.add_argument("slug", nargs="?", help="slug tập cần đăng (vd: gps). Bỏ trống nếu dùng cờ.")
+    ap.add_argument("slug", nargs="?", help="slug tập (vd: gps) HOẶC 'login' / 'auth'")
+    ap.add_argument("code", nargs="?", help="dùng với 'auth': dán code hoặc URL redirect")
     ap.add_argument("--queue", action="store_true", help="đăng mọi video Nextcloud chưa đăng TikTok")
     ap.add_argument("--list", action="store_true", help="liệt kê tình trạng đăng")
     args = ap.parse_args(argv)
 
-    if args.slug == "login":
-        oauth_login()
+    if args.slug == "login":            # BƯỚC 1: mở URL cấp quyền
+        login_start()
+        return 0
+    if args.slug == "auth":             # BƯỚC 2: dán code -> đổi token
+        if not args.code:
+            print('Thiếu code. Dùng: python tiktok_publish/publish.py auth "<code hoặc URL redirect>"',
+                  file=sys.stderr)
+            return 2
+        login_finish(args.code)
         return 0
     if args.list:
         show_list()
