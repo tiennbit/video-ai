@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TikTok OAuth — Mã xác thực / Authorization code</title>
+<style>
+  :root { --fg:#1b1f27; --muted:#5a6472; --accent:#c8102e; --ok:#0a7d3a; --card:#f6f7f9; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+         color:var(--fg); line-height:1.6; background:#fff; }
+  .wrap { max-width:720px; margin:0 auto; padding:2.5rem 1.25rem; }
+  h1 { font-size:1.4rem; margin:0 0 .3rem; }
+  p.sub { color:var(--muted); margin-top:0; }
+  .codebox { background:var(--card); border:1px solid #e6e8eb; border-radius:12px; padding:1rem 1.1rem; margin:1.4rem 0; }
+  .codebox label { font-size:.8rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+  #code { font-family:ui-monospace,"SF Mono",Consolas,monospace; font-size:1.05rem; word-break:break-all;
+          background:#fff; border:1px dashed #cfd4da; border-radius:8px; padding:.7rem .8rem; margin:.5rem 0; }
+  button { font:inherit; font-weight:700; cursor:pointer; border:none; border-radius:8px;
+           background:var(--accent); color:#fff; padding:.6rem 1.1rem; }
+  button:active { transform:translateY(1px); }
+  .cmd { font-family:ui-monospace,Consolas,monospace; background:#0f1320; color:#e6e8ee; border-radius:8px;
+         padding:.7rem .8rem; word-break:break-all; font-size:.9rem; margin-top:.6rem; }
+  .state { color:var(--muted); font-size:.85rem; margin-top:.4rem; }
+  .err { background:#fdecee; border:1px solid #f5c2c7; color:#842029; border-radius:12px; padding:1rem 1.1rem; }
+  .ok-hint { color:var(--ok); font-weight:700; }
+  hr { border:none; border-top:1px solid var(--card); margin:2rem 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>TikTok OAuth — Mã xác thực</h1>
+  <p class="sub">Trang callback tĩnh (không lưu gì) · Static callback page (stores nothing)</p>
+  <div id="content"></div>
+  <hr>
+  <p class="sub"><b>VI:</b> Copy <b>code</b> ở trên rồi dán vào cửa sổ dòng lệnh đang chạy script.<br>
+     <b>EN:</b> Copy the <b>code</b> above and paste it into the terminal running the script.</p>
+</div>
+<script>
+(function () {
+  var p = new URLSearchParams(window.location.search);
+  var code = p.get("code"), state = p.get("state");
+  var err = p.get("error"), errDesc = p.get("error_description");
+  var el = document.getElementById("content");
+
+  if (err) {
+    el.innerHTML =
+      '<div class="err"><b>Lỗi / Error:</b> ' + escapeHtml(err) +
+      (errDesc ? '<br>' + escapeHtml(decodeURIComponent(errDesc)) : '') +
+      '<br><br>Vui lòng chạy lại <code>python tiktok_publish/publish.py login</code>.</div>';
+    return;
+  }
+  if (!code) {
+    el.innerHTML = '<div class="err">Không thấy tham số <code>code</code> trong URL. / No <code>code</code> in URL.</div>';
+    return;
+  }
+
+  el.innerHTML =
+    '<div class="codebox">' +
+      '<label>Authorization code</label>' +
+      '<div id="code">' + escapeHtml(code) + '</div>' +
+      '<button id="copyBtn">Copy code</button> ' +
+      '<span id="copied" class="ok-hint" style="display:none">✓ Đã copy!</span>' +
+      (state ? '<div class="state">state: ' + escapeHtml(state) + '</div>' : '') +
+    '</div>' +
+    '<p class="sub">Rồi chạy / Then run:</p>' +
+    '<div class="cmd">python tiktok_publish/publish.py auth "' + escapeHtml(code) + '"</div>' +
+    '<p class="sub" style="margin-top:1rem">Hoặc dán nguyên URL của trang này vào lệnh — script tự trích code.<br>' +
+    'Or paste this page\'s full URL into the command — the script extracts the code.</p>';
+
+  var btn = document.getElementById("copyBtn");
+  btn.addEventListener("click", function () {
+    navigator.clipboard.writeText(code).then(function () {
+      document.getElementById("copied").style.display = "inline";
+    }, function () {
+      // fallback: chọn text
+      var r = document.createRange(); r.selectNode(document.getElementById("code"));
+      window.getSelection().removeAllRanges(); window.getSelection().addRange(r);
+    });
+  });
+
+  function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+})();
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+</script>
+</body>
+</html>
