@@ -1,0 +1,11 @@
+# HÀNG ĐỢI RENDER — nguồn việc cho render ban ngày (render_queue.sh).
+# Mỗi dòng 1 tập:  <slug> <SceneClass>
+# Dòng trống và dòng bắt đầu bằng # bị bỏ qua.
+# ĐÊM: phiên Claude code xong tập thì THÊM dòng vào cuối file này, ví dụ:
+#   echo "docao DoCaoVideo" >> noidung/render_queue.txt
+# NGÀY: chạy  docker compose exec videoai bash render_queue.sh
+#   -> render + tự đăng từng tập; tập xong tự bị gỡ khỏi file này.
+#
+# Ví dụ (đang comment, bỏ # để kích hoạt):
+# docao DoCaoVideo
+# matkhau MatKhauVideo
