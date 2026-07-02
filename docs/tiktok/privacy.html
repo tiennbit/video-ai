@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy — Toán Lý Đời Thực Poster</title>
+<style>
+  :root { --fg:#1b1f27; --muted:#5a6472; --accent:#c8102e; --bg:#ffffff; --card:#f6f7f9; }
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+         color:var(--fg); background:var(--bg); line-height:1.65; }
+  .wrap { max-width:760px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+  h1 { font-size:1.7rem; margin:0 0 .3rem; }
+  h2 { font-size:1.15rem; margin:2rem 0 .5rem; border-bottom:2px solid var(--card); padding-bottom:.3rem; }
+  h3 { font-size:1rem; margin:1.3rem 0 .3rem; }
+  .meta { color:var(--muted); font-size:.9rem; margin-bottom:1.5rem; }
+  .lang { display:inline-block; background:var(--card); border-radius:999px; padding:.15rem .7rem;
+          font-size:.8rem; font-weight:600; color:var(--muted); margin:1.5rem 0 .5rem; }
+  a { color:var(--accent); }
+  ul { padding-left:1.2rem; }
+  footer { margin-top:3rem; color:var(--muted); font-size:.85rem; border-top:1px solid var(--card); padding-top:1rem; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Privacy Policy — Toán Lý Đời Thực Poster</h1>
+  <p class="meta">Cập nhật lần cuối / Last updated: 2026-07-02 · Liên hệ / Contact:
+     <a href="mailto:ngbatienth@gmail.com">ngbatienth@gmail.com</a> ·
+     <a href="https://tiennb.com">tiennb.com</a></p>
+
+  <span class="lang">TIẾNG VIỆT</span>
+
+  <h3>1. Ứng dụng này là gì</h3>
+  <p>"Toán Lý Đời Thực Poster" là công cụ cá nhân giúp chủ kênh <strong>tự đăng video giáo dục do chính mình
+     sản xuất</strong> lên tài khoản TikTok của chính mình, thông qua Content Posting API chính thức của TikTok.</p>
+
+  <h3>2. Dữ liệu chúng tôi truy cập</h3>
+  <ul>
+    <li><strong>Access token / refresh token</strong> (để đăng video thay bạn) và <strong>open_id</strong> (định danh tài khoản).</li>
+    <li>Thông tin cơ bản hồ sơ (qua <code>user.info.basic</code>) và cài đặt đăng (qua <code>creator_info</code>:
+        mức riêng tư cho phép, bật/tắt bình luận, duet, stitch, thời lượng tối đa) — chỉ để dựng bài đăng hợp lệ.</li>
+  </ul>
+  <p>Ứng dụng <strong>không</strong> thu thập danh bạ, tin nhắn, mật khẩu, hay dữ liệu người dùng khác.</p>
+
+  <h3>3. Cách dùng dữ liệu</h3>
+  <p>Token chỉ dùng để gọi các endpoint đăng video của TikTok (<code>creator_info/query</code>,
+     <code>video/init</code>, upload, <code>status/fetch</code>). Nội dung đăng do chính chủ tài khoản tạo ra.</p>
+
+  <h3>4. Lưu trữ</h3>
+  <p>Token được lưu <strong>cục bộ trên máy của chủ kênh</strong> trong file cấu hình có quyền hạn chế
+     (<code>~/.config/toanly/tiktok.env</code>, chmod 600). Không gửi lên máy chủ bên thứ ba, không chia sẻ với ai.</p>
+
+  <h3>5. Chia sẻ với bên thứ ba</h3>
+  <p>Không. Dữ liệu chỉ trao đổi trực tiếp giữa máy của bạn và API của TikTok.</p>
+
+  <h3>6. Lưu giữ &amp; xoá</h3>
+  <p>Token tồn tại tới khi bạn thu hồi quyền hoặc xoá file cấu hình. Bạn có thể thu hồi quyền bất cứ lúc nào tại
+     <em>Cài đặt TikTok → Bảo mật → Ứng dụng đã cấp quyền</em>, và xoá file <code>tiktok.env</code> để xoá token cục bộ.</p>
+
+  <h3>7. Trẻ em</h3>
+  <p>Ứng dụng không hướng tới người dưới 13 tuổi và không cố ý thu thập dữ liệu của trẻ em.</p>
+
+  <h3>8. Thay đổi</h3>
+  <p>Nếu chính sách thay đổi, bản cập nhật sẽ đăng tại cùng URL kèm ngày cập nhật mới.</p>
+
+  <span class="lang">ENGLISH</span>
+
+  <h3>1. What this app is</h3>
+  <p>"Toán Lý Đời Thực Poster" is a personal tool that lets the channel owner <strong>self-publish their own
+     educational videos</strong> to their own TikTok account via TikTok's official Content Posting API.</p>
+
+  <h3>2. Data we access</h3>
+  <ul>
+    <li>an <strong>access/refresh token</strong> (to post videos on your behalf) and your <strong>open_id</strong>;</li>
+    <li>basic profile info (<code>user.info.basic</code>) and posting settings (<code>creator_info</code>:
+        allowed privacy levels, comment/duet/stitch toggles, max duration) — solely to build a valid post.</li>
+  </ul>
+  <p>The app does <strong>not</strong> collect contacts, messages, passwords, or any other user data.</p>
+
+  <h3>3. How we use it</h3>
+  <p>Tokens are used only to call TikTok's posting endpoints (<code>creator_info/query</code>,
+     <code>video/init</code>, upload, <code>status/fetch</code>). Posted content is created by the account owner.</p>
+
+  <h3>4. Storage</h3>
+  <p>Tokens are stored <strong>locally on the owner's machine</strong> in a restricted config file
+     (<code>~/.config/toanly/tiktok.env</code>, chmod 600). They are not sent to any third-party server and not shared.</p>
+
+  <h3>5. Third-party sharing</h3>
+  <p>None. Data flows only between your machine and TikTok's API.</p>
+
+  <h3>6. Retention &amp; deletion</h3>
+  <p>Tokens persist until you revoke access or delete the config file. You may revoke access anytime in
+     <em>TikTok Settings → Security → Apps that have access</em>, and delete <code>tiktok.env</code> to remove local tokens.</p>
+
+  <h3>7. Children</h3>
+  <p>The app is not directed to children under 13 and does not knowingly collect their data.</p>
+
+  <h3>8. Changes</h3>
+  <p>Updates will be posted at the same URL with a new "last updated" date.</p>
+
+  <footer>
+    © 2026 Toán Lý Đời Thực · <a href="../index.html">Trang chủ</a> ·
+    <a href="terms.html">Terms of Service</a>
+  </footer>
+</div>
+</body>
+</html>
