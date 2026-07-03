@@ -16,7 +16,7 @@ import time
 
 import requests
 
-from config import (CREATOR_INFO_URL, SINGLE_CHUNK_MAX, STATUS_URL, VIDEO_INIT_URL)
+from config import (COVER_TIMESTAMP_MS, CREATOR_INFO_URL, SINGLE_CHUNK_MAX, STATUS_URL, VIDEO_INIT_URL)
 
 JSON_HEADERS = {"Content-Type": "application/json; charset=UTF-8"}
 DEFAULT_CHUNK = 10 * 1024 * 1024  # 10MB cho file lớn
@@ -57,8 +57,9 @@ def chunk_ranges(video_size: int, chunk_size: int, count: int) -> list[tuple[int
 
 def build_post_body(caption: str, privacy: str, creator_info: dict,
                     video_size: int, chunk_size: int, count: int,
-                    cover_ms: int = 1000) -> dict:
-    """Dựng body cho video/init. Tôn trọng cài đặt tài khoản (comment/duet/stitch bị tắt thì phải để tắt)."""
+                    cover_ms: int = COVER_TIMESTAMP_MS) -> dict:
+    """Dựng body cho video/init. Tôn trọng cài đặt tài khoản (comment/duet/stitch bị tắt thì phải để tắt).
+    cover_ms: mốc khung hình dùng làm thumbnail (mặc định trỏ vào khung cover SEO nướng ở đầu video)."""
     return {
         "post_info": {
             "title": caption,

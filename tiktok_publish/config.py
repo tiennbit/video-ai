@@ -38,6 +38,11 @@ SINGLE_CHUNK_MAX = 64 * 1024 * 1024  # <= mức này -> đăng 1 chunk (chunk_si
 DEFAULT_REDIRECT_URI = "https://tiennbit.github.io/video-ai/tiktok/callback.html"
 DEFAULT_PRIVACY = "SELF_ONLY"  # app CHƯA audit chỉ được SELF_ONLY
 
+# Thumbnail/cover: TikTok chỉ chọn 1 KHUNG HÌNH trong video (không nhận ảnh rời). Video render
+# bằng brand.play_cover() giữ khung cover TĨNH ~0.6s ở đầu -> trỏ vào giữa khoảng đó (300ms).
+# Với video CŨ (chưa có khung cover nướng sẵn) thì đây là ~đầu intro con vẹt — vẫn hợp lệ.
+COVER_TIMESTAMP_MS = 300
+
 TIKTOK_ENV = Path(os.path.expanduser("~/.config/toanly/tiktok.env"))
 NEXTCLOUD_ENV = Path(os.path.expanduser("~/.config/toanly/nextcloud.env"))
 # Log các slug ĐÃ đăng TikTok (ngoài repo) — chống đăng trùng.

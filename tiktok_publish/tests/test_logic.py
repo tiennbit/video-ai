@@ -10,7 +10,7 @@ import pytest
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from config import SINGLE_CHUNK_MAX  # noqa: E402
+from config import COVER_TIMESTAMP_MS, SINGLE_CHUNK_MAX  # noqa: E402
 from nextcloud_src import build_caption  # noqa: E402
 from oauth import _parse_token_response, build_authorize_url, extract_code, pkce_pair  # noqa: E402
 from tiktok_api import (build_post_body, chunk_ranges, compute_chunks,  # noqa: E402
@@ -80,6 +80,14 @@ def test_body_respects_account_comment_disabled():
     assert body["post_info"]["disable_duet"] is False
     assert body["source_info"] == {"source": "FILE_UPLOAD", "video_size": 3_500_000,
                                    "chunk_size": 3_500_000, "total_chunk_count": 1}
+
+
+def test_body_cover_points_at_baked_seo_frame():
+    """Thumbnail mặc định trỏ vào khung cover SEO nướng ở đầu video (không phải giây 1 như trước)."""
+    creator = {"privacy_level_options": ["SELF_ONLY"]}
+    body = build_post_body("cap", "SELF_ONLY", creator, 3_500_000, 3_500_000, 1)
+    assert body["post_info"]["video_cover_timestamp_ms"] == COVER_TIMESTAMP_MS
+    assert COVER_TIMESTAMP_MS < 600  # phải nằm trong khoảng giữ cover tĩnh (~0.6s) của brand.play_cover
 
 
 # ---------- validate_privacy ----------
